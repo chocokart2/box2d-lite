@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\include",
+    "\\include\\box2d-lite",
+    "\\include\\our-physics",
+    "\\samples",
+    "\\src",
+    "\\src\\our-physics"
+  ],
+  "SelectedNode": "\\src\\our-physics\\OurArbiter.cpp",
+  "PreviewInSolutionExplorer": false
+}

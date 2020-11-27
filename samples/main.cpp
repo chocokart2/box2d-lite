@@ -20,22 +20,22 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
-#include "box2d-lite/World.h"
-#include "box2d-lite/Body.h"
-#include "box2d-lite/Joint.h"
+#include "our-physics/OurWorld.h"
+#include "our-physics/OurBody.h"
+#include "our-physics/OurJoint.h"
 
 namespace
 {
 	GLFWwindow* mainWindow = NULL;
 
-	Body bodies[200];
-	Joint joints[100];
+	OurBody bodies[200];
+	OurJoint joints[100];
 	
-	Body* bomb = NULL;
+	OurBody* bomb = NULL;
 
 	float timeStep = 1.0f / 60.0f;
 	int iterations = 10;
-	Vec2 gravity(0.0f, -10.0f);
+	V2 gravity(0.0f, -10.0f);
 
 	int numBodies = 0;
 	int numJoints = 0;
@@ -47,7 +47,7 @@ namespace
 	float zoom = 10.0f;
 	float pan_y = 8.0f;
 
-	World world(gravity, iterations);
+	OurWorld world(gravity, iterations);
 	
 	//상태 저장 변수 추가
 	// (일시정지)
@@ -70,16 +70,16 @@ static void DrawText(int x, int y, const char* string)
 	ImGui::End();
 }
 
-static void DrawBody(Body* body)
+static void DrawBody(OurBody* body)
 {
-	Mat22 R(body->rotation);
-	Vec2 x = body->position;
-	Vec2 h = 0.5f * body->width;
+	M22 R(body->rotation);
+	V2 x = body->position;
+	V2 h = 0.5f * body->width;
 
-	Vec2 v1 = x + R * Vec2(-h.x, -h.y);
-	Vec2 v2 = x + R * Vec2( h.x, -h.y);
-	Vec2 v3 = x + R * Vec2( h.x,  h.y);
-	Vec2 v4 = x + R * Vec2(-h.x,  h.y);
+	V2 v1 = x + R * V2(-h.x, -h.y);
+	V2 v2 = x + R * V2( h.x, -h.y);
+	V2 v3 = x + R * V2( h.x,  h.y);
+	V2 v4 = x + R * V2(-h.x,  h.y);
 
 	if (body == bomb)
 		glColor3f(0.4f, 0.9f, 0.4f);
@@ -94,19 +94,19 @@ static void DrawBody(Body* body)
 	glEnd();
 }
 
-static void DrawJoint(Joint* joint)
+static void DrawJoint(OurJoint* joint)
 {
 	Body* b1 = joint->body1;
 	Body* b2 = joint->body2;
 
-	Mat22 R1(b1->rotation);
-	Mat22 R2(b2->rotation);
+	M22 R1(b1->rotation);
+	M22 R2(b2->rotation);
 
-	Vec2 x1 = b1->position;
-	Vec2 p1 = x1 + R1 * joint->localAnchor1;
+	V2 x1 = b1->position;
+	V2 p1 = x1 + R1 * joint->localAnchor1;
 
-	Vec2 x2 = b2->position;
-	Vec2 p2 = x2 + R2 * joint->localAnchor2;
+	V2 x2 = b2->position;
+	V2 p2 = x2 + R2 * joint->localAnchor2;
 
 	glColor3f(0.5f, 0.5f, 0.8f);
 	glBegin(GL_LINES);
@@ -122,7 +122,7 @@ static void LaunchBomb()
 	if (!bomb)
 	{
 		bomb = bodies + numBodies;
-		bomb->Set(Vec2(1.0f, 1.0f), 50.0f);
+		bomb->Set(V2(1.0f, 1.0f), 50.0f);
 		bomb->friction = 0.2f;
 		world.Add(bomb);
 		++numBodies;
@@ -135,31 +135,31 @@ static void LaunchBomb()
 }
 
 // Single box
-static void Demo1(Body* b, Joint* j)
+static void Demo1(OurBody* b, OurJoint* j)
 {
-	b->Set(Vec2(100.0f, 20.0f), FLT_MAX);
+	b->Set(V2(100.0f, 20.0f), FLT_MAX);
 	b->position.Set(0.0f, -0.5f * b->width.y);
 	world.Add(b);
 	++b; ++numBodies;
 
-	b->Set(Vec2(1.0f, 1.0f), 200.0f);
+	b->Set(V2(1.0f, 1.0f), 200.0f);
 	b->position.Set(0.0f, 4.0f);
 	world.Add(b);
 	++b; ++numBodies;
 }
 
 // A simple pendulum
-static void Demo2(Body* b, Joint* j)
+static void Demo2(OurBody* b, OurJoint* j)
 {
-	Body* b1 = b + 0;
-	b1->Set(Vec2(100.0f, 20.0f), FLT_MAX);
+	OurBody* b1 = b + 0;
+	b1->Set(V2(100.0f, 20.0f), FLT_MAX);
 	b1->friction = 0.2f;
 	b1->position.Set(0.0f, -0.5f * b1->width.y);
 	b1->rotation = 0.0f;
 	world.Add(b1);
 
-	Body* b2 = b + 1;
-	b2->Set(Vec2(1.0f, 1.0f), 100.0f);
+	OurBody* b2 = b + 1;
+	b2->Set(V2(1.0f, 1.0f), 100.0f);
 	b2->friction = 0.2f;
 	b2->position.Set(9.0f, 11.0f);
 	b2->rotation = 0.0f;
@@ -167,43 +167,43 @@ static void Demo2(Body* b, Joint* j)
 
 	numBodies += 2;
 
-	j->Set(b1, b2, Vec2(0.0f, 11.0f));
+	j->Set(b1, b2, V2(0.0f, 11.0f));
 	world.Add(j);
 
 	numJoints += 1;
 }
 
 // Varying friction coefficients
-static void Demo3(Body* b, Joint* j)
+static void Demo3(OurBody* b, OurJoint* j)
 {
-	b->Set(Vec2(100.0f, 20.0f), FLT_MAX);
+	b->Set(V2(100.0f, 20.0f), FLT_MAX);
 	b->position.Set(0.0f, -0.5f * b->width.y);
 	world.Add(b);
 	++b; ++numBodies;
 
-	b->Set(Vec2(13.0f, 0.25f), FLT_MAX);
+	b->Set(V2(13.0f, 0.25f), FLT_MAX);
 	b->position.Set(-2.0f, 11.0f);
 	b->rotation = -0.25f;
 	world.Add(b);
 	++b; ++numBodies;
 
-	b->Set(Vec2(0.25f, 1.0f), FLT_MAX);
+	b->Set(V2(0.25f, 1.0f), FLT_MAX);
 	b->position.Set(5.25f, 9.5f);
 	world.Add(b);
 	++b; ++numBodies;
 
-	b->Set(Vec2(13.0f, 0.25f), FLT_MAX);
+	b->Set(V2(13.0f, 0.25f), FLT_MAX);
 	b->position.Set(2.0f, 7.0f);
 	b->rotation = 0.25f;
 	world.Add(b);
 	++b; ++numBodies;
 
-	b->Set(Vec2(0.25f, 1.0f), FLT_MAX);
+	b->Set(V2(0.25f, 1.0f), FLT_MAX);
 	b->position.Set(-5.25f, 5.5f);
 	world.Add(b);
 	++b; ++numBodies;
 
-	b->Set(Vec2(13.0f, 0.25f), FLT_MAX);
+	b->Set(V2(13.0f, 0.25f), FLT_MAX);
 	b->position.Set(-2.0f, 3.0f);
 	b->rotation = -0.25f;
 	world.Add(b);
@@ -212,7 +212,7 @@ static void Demo3(Body* b, Joint* j)
 	float friction[5] = {0.75f, 0.5f, 0.35f, 0.1f, 0.0f};
 	for (int i = 0; i < 5; ++i)
 	{
-		b->Set(Vec2(0.5f, 0.5f), 25.0f);
+		b->Set(V2(0.5f, 0.5f), 25.0f);
 		b->friction = friction[i];
 		b->position.Set(-7.5f + 2.0f * i, 14.0f);
 		world.Add(b);
@@ -221,9 +221,9 @@ static void Demo3(Body* b, Joint* j)
 }
 
 // A vertical stack
-static void Demo4(Body* b, Joint* j)
+static void Demo4(OurBody* b, OurJoint* j)
 {
-	b->Set(Vec2(100.0f, 20.0f), FLT_MAX);
+	b->Set(V2(100.0f, 20.0f), FLT_MAX);
 	b->friction = 0.2f;
 	b->position.Set(0.0f, -0.5f * b->width.y);
 	b->rotation = 0.0f;
@@ -232,7 +232,7 @@ static void Demo4(Body* b, Joint* j)
 
 	for (int i = 0; i < 10; ++i)
 	{
-		b->Set(Vec2(1.0f, 1.0f), 1.0f);
+		b->Set(V2(1.0f, 1.0f), 1.0f);
 		b->friction = 0.2f;
 		float x = Random(-0.1f, 0.1f);
 		b->position.Set(x, 0.51f + 1.05f * i);
@@ -242,17 +242,17 @@ static void Demo4(Body* b, Joint* j)
 }
 
 // A pyramid
-static void Demo5(Body* b, Joint* j)
+static void Demo5(OurBody* b, OurJoint* j)
 {
-	b->Set(Vec2(100.0f, 20.0f), FLT_MAX);
+	b->Set(V2(100.0f, 20.0f), FLT_MAX);
 	b->friction = 0.2f;
 	b->position.Set(0.0f, -0.5f * b->width.y);
 	b->rotation = 0.0f;
 	world.Add(b);
 	++b; ++numBodies;
 
-	Vec2 x(-6.0f, 0.75f);
-	Vec2 y;
+	V2 x(-6.0f, 0.75f);
+	V2 y;
 
 	for (int i = 0; i < 12; ++i)
 	{
@@ -260,60 +260,60 @@ static void Demo5(Body* b, Joint* j)
 
 		for (int j = i; j < 12; ++j)
 		{
-			b->Set(Vec2(1.0f, 1.0f), 10.0f);
+			b->Set(V2(1.0f, 1.0f), 10.0f);
 			b->friction = 0.2f;
 			b->position = y;
 			world.Add(b);
 			++b; ++numBodies;
 
-			y += Vec2(1.125f, 0.0f);
+			y += V2(1.125f, 0.0f);
 		}
 
-		//x += Vec2(0.5625f, 1.125f);
-		x += Vec2(0.5625f, 2.0f);
+		//x += V2(0.5625f, 1.125f);
+		x += V2(0.5625f, 2.0f);
 	}
 }
 
 // A teeter
-static void Demo6(Body* b, Joint* j)
+static void Demo6(OurBody* b, OurJoint* j)
 {
-	Body* b1 = b + 0;
-	b1->Set(Vec2(100.0f, 20.0f), FLT_MAX);
+	OurBody* b1 = b + 0;
+	b1->Set(V2(100.0f, 20.0f), FLT_MAX);
 	b1->position.Set(0.0f, -0.5f * b1->width.y);
 	world.Add(b1);
 
-	Body* b2 = b + 1;
-	b2->Set(Vec2(12.0f, 0.25f), 100.0f);
+	OurBody* b2 = b + 1;
+	b2->Set(V2(12.0f, 0.25f), 100.0f);
 	b2->position.Set(0.0f, 1.0f);
 	world.Add(b2);
 
-	Body* b3 = b + 2;
-	b3->Set(Vec2(0.5f, 0.5f), 25.0f);
+	OurBody* b3 = b + 2;
+	b3->Set(V2(0.5f, 0.5f), 25.0f);
 	b3->position.Set(-5.0f, 2.0f);
 	world.Add(b3);
 
-	Body* b4 = b + 3;
-	b4->Set(Vec2(0.5f, 0.5f), 25.0f);
+	OurBody* b4 = b + 3;
+	b4->Set(V2(0.5f, 0.5f), 25.0f);
 	b4->position.Set(-5.5f, 2.0f);
 	world.Add(b4);
 
-	Body* b5 = b + 4;
-	b5->Set(Vec2(1.0f, 1.0f), 100.0f);
+	OurBody* b5 = b + 4;
+	b5->Set(V2(1.0f, 1.0f), 100.0f);
 	b5->position.Set(5.5f, 15.0f);
 	world.Add(b5);
 
 	numBodies += 5;
 
-	j->Set(b1, b2, Vec2(0.0f, 1.0f));
+	j->Set(b1, b2, V2(0.0f, 1.0f));
 	world.Add(j);
 
 	numJoints += 1;
 }
 
 // A suspension bridge
-static void Demo7(Body* b, Joint* j)
+static void Demo7(OurBody* b, OurJoint* j)
 {
-	b->Set(Vec2(100.0f, 20.0f), FLT_MAX);
+	b->Set(V2(100.0f, 20.0f), FLT_MAX);
 	b->friction = 0.2f;
 	b->position.Set(0.0f, -0.5f * b->width.y);
 	b->rotation = 0.0f;
@@ -325,7 +325,7 @@ static void Demo7(Body* b, Joint* j)
 
 	for (int i = 0; i < numPlanks; ++i)
 	{
-		b->Set(Vec2(1.0f, 0.25f), mass);
+		b->Set(V2(1.0f, 0.25f), mass);
 		b->friction = 0.2f;
 		b->position.Set(-8.5f + 1.25f * i, 5.0f);
 		world.Add(b);
@@ -351,7 +351,7 @@ static void Demo7(Body* b, Joint* j)
 
 	for (int i = 0; i < numPlanks; ++i)
 	{
-		j->Set(bodies+i, bodies+i+1, Vec2(-9.125f + 1.25f * i, 5.0f));
+		j->Set(bodies+i, bodies+i+1, V2(-9.125f + 1.25f * i, 5.0f));
 		j->softness = softness;
 		j->biasFactor = biasFactor;
 
@@ -359,7 +359,7 @@ static void Demo7(Body* b, Joint* j)
 		++j; ++numJoints;
 	}
 
-	j->Set(bodies + numPlanks, bodies, Vec2(-9.125f + 1.25f * numPlanks, 5.0f));
+	j->Set(bodies + numPlanks, bodies, V2(-9.125f + 1.25f * numPlanks, 5.0f));
 	j->softness = softness;
 	j->biasFactor = biasFactor;
 	world.Add(j);
@@ -367,92 +367,92 @@ static void Demo7(Body* b, Joint* j)
 }
 
 // Dominos
-static void Demo8(Body* b, Joint* j)
+static void Demo8(OurBody* b, OurJoint* j)
 {
-	Body* b1 = b;
-	b->Set(Vec2(100.0f, 20.0f), FLT_MAX);
+	OurBody* b1 = b;
+	b->Set(V2(100.0f, 20.0f), FLT_MAX);
 	b->position.Set(0.0f, -0.5f * b->width.y);
 	world.Add(b);
 	++b; ++numBodies;
 
-	b->Set(Vec2(12.0f, 0.5f), FLT_MAX);
+	b->Set(V2(12.0f, 0.5f), FLT_MAX);
 	b->position.Set(-1.5f, 10.0f);
 	world.Add(b);
 	++b; ++numBodies;
 
 	for (int i = 0; i < 10; ++i)
 	{
-		b->Set(Vec2(0.2f, 2.0f), 10.0f);
+		b->Set(V2(0.2f, 2.0f), 10.0f);
 		b->position.Set(-6.0f + 1.0f * i, 11.125f);
 		b->friction = 0.1f;
 		world.Add(b);
 		++b; ++numBodies;
 	}
 
-	b->Set(Vec2(14.0f, 0.5f), FLT_MAX);
+	b->Set(V2(14.0f, 0.5f), FLT_MAX);
 	b->position.Set(1.0f, 6.0f);
 	b->rotation = 0.3f;
 	world.Add(b);
 	++b; ++numBodies;
 
-	Body* b2 = b;
-	b->Set(Vec2(0.5f, 3.0f), FLT_MAX);
+	OurBody* b2 = b;
+	b->Set(V2(0.5f, 3.0f), FLT_MAX);
 	b->position.Set(-7.0f, 4.0f);
 	world.Add(b);
 	++b; ++numBodies;
 
-	Body* b3 = b;
-	b->Set(Vec2(12.0f, 0.25f), 20.0f);
+	OurBody* b3 = b;
+	b->Set(V2(12.0f, 0.25f), 20.0f);
 	b->position.Set(-0.9f, 1.0f);
 	world.Add(b);
 	++b; ++numBodies;
 
-	j->Set(b1, b3, Vec2(-2.0f, 1.0f));
+	j->Set(b1, b3, V2(-2.0f, 1.0f));
 	world.Add(j);
 	++j; ++numJoints;
 
-	Body* b4 = b;
-	b->Set(Vec2(0.5f, 0.5f), 10.0f);
+	OurBody* b4 = b;
+	b->Set(V2(0.5f, 0.5f), 10.0f);
 	b->position.Set(-10.0f, 15.0f);
 	world.Add(b);
 	++b; ++numBodies;
 
-	j->Set(b2, b4, Vec2(-7.0f, 15.0f));
+	j->Set(b2, b4, V2(-7.0f, 15.0f));
 	world.Add(j);
 	++j; ++numJoints;
 
-	Body* b5 = b;
-	b->Set(Vec2(2.0f, 2.0f), 20.0f);
+	OurBody* b5 = b;
+	b->Set(V2(2.0f, 2.0f), 20.0f);
 	b->position.Set(6.0f, 2.5f);
 	b->friction = 0.1f;
 	world.Add(b);
 	++b; ++numBodies;
 
-	j->Set(b1, b5, Vec2(6.0f, 2.6f));
+	j->Set(b1, b5, V2(6.0f, 2.6f));
 	world.Add(j);
 	++j; ++numJoints;
 
-	Body* b6 = b;
-	b->Set(Vec2(2.0f, 0.2f), 10.0f);
+	OurBody* b6 = b;
+	b->Set(V2(2.0f, 0.2f), 10.0f);
 	b->position.Set(6.0f, 3.6f);
 	world.Add(b);
 	++b; ++numBodies;
 
-	j->Set(b5, b6, Vec2(7.0f, 3.5f));
+	j->Set(b5, b6, V2(7.0f, 3.5f));
 	world.Add(j);
 	++j; ++numJoints;
 }
 
 // A multi-pendulum
-static void Demo9(Body* b, Joint* j)
+static void Demo9(OurBody* b, OurJoint* j)
 {
-	b->Set(Vec2(100.0f, 20.0f), FLT_MAX);
+	b->Set(V2(100.0f, 20.0f), FLT_MAX);
 	b->friction = 0.2f;
 	b->position.Set(0.0f, -0.5f * b->width.y);
 	b->rotation = 0.0f;
 	world.Add(b);
 
-	Body * b1 = b;
+	OurBody * b1 = b;
 	++b;
 	++numBodies;
 
@@ -479,14 +479,14 @@ static void Demo9(Body* b, Joint* j)
 
 	for (int i = 0; i < 15; ++i)
 	{
-		Vec2 x(0.5f + i, y);
-		b->Set(Vec2(0.75f, 0.25f), mass);
+		V2 x(0.5f + i, y);
+		b->Set(V2(0.75f, 0.25f), mass);
 		b->friction = 0.2f;
 		b->position = x;
 		b->rotation = 0.0f;
 		world.Add(b);
 
-		j->Set(b1, b, Vec2(float(i), y));
+		j->Set(b1, b, V2(float(i), y));
 		j->softness = softness;
 		j->biasFactor = biasFactor;
 		world.Add(j);
@@ -499,7 +499,7 @@ static void Demo9(Body* b, Joint* j)
 	}
 }
 
-void (*demos[])(Body* b, Joint* j) = {Demo1, Demo2, Demo3, Demo4, Demo5, Demo6, Demo7, Demo8, Demo9};
+void (*demos[])(OurBody* b, OurJoint* j) = {Demo1, Demo2, Demo3, Demo4, Demo5, Demo6, Demo7, Demo8, Demo9};
 const char* demoStrings[] = {
 	"Demo 1: A Single Box",
 	"Demo 2: Simple Pendulum",
@@ -549,15 +549,15 @@ static void Keyboard(GLFWwindow* window, int key, int scancode, int action, int 
 		break;
 
 	case GLFW_KEY_A:
-		World::accumulateImpulses = !World::accumulateImpulses;
+		OurWorld::accumulateImpulses = !OurWorld::accumulateImpulses;
 		break;
 
 	case GLFW_KEY_P:
-		World::positionCorrection = !World::positionCorrection;
+		OurWorld::positionCorrection = !OurWorld::positionCorrection;
 		break;
 
 	case GLFW_KEY_W:
-		World::warmStarting = !World::warmStarting;
+		OurWorld::warmStarting = !OurWorld::warmStarting;
 		break;
 
 	case GLFW_KEY_SPACE:
@@ -598,7 +598,13 @@ static void Reshape(GLFWwindow*, int w, int h)
 	}
 }
 
-int main(int, char**)
+class MainClass {
+public:
+	static int mainFunc();
+};
+
+
+int MainClass::mainFunc()
 {
 	glfwSetErrorCallback(glfwErrorCallback);
 
@@ -678,13 +684,13 @@ int main(int, char**)
 		DrawText(5, 35, "Keys: 1-9 Demos, Space to Launch the Bomb");
 
 		char buffer[64];
-		sprintf(buffer, "(A)ccumulation %s", World::accumulateImpulses ? "ON" : "OFF");
+		sprintf(buffer, "(A)ccumulation %s", OurWorld::accumulateImpulses ? "ON" : "OFF");
 		DrawText(5, 65, buffer);
 
-		sprintf(buffer, "(P)osition Correction %s", World::positionCorrection ? "ON" : "OFF");
+		sprintf(buffer, "(P)osition Correction %s", OurWorld::positionCorrection ? "ON" : "OFF");
 		DrawText(5, 95, buffer);
 
-		sprintf(buffer, "(W)arm Starting %s", World::warmStarting ? "ON" : "OFF");
+		sprintf(buffer, "(W)arm Starting %s", OurWorld::warmStarting ? "ON" : "OFF");
 		DrawText(5, 125, buffer);
 		
 		// 일시정지 문구 추가
@@ -725,7 +731,7 @@ int main(int, char**)
 			const Arbiter& arbiter = iter->second;
 			for (int i = 0; i < arbiter.numContacts; ++i)
 			{
-				Vec2 p = arbiter.contacts[i].position;
+				V2 p = arbiter.contacts[i].position;
 				glVertex2f(p.x, p.y);
 			}
 		}
@@ -741,4 +747,8 @@ int main(int, char**)
 
 	glfwTerminate();
 	return 0;
+}
+
+int main() {
+	MainClass::mainFunc();
 }
