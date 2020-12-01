@@ -40,6 +40,7 @@ struct World
 	static bool accumulateImpulses;
 	static bool warmStarting;
 	static bool positionCorrection;
+	static bool Moter;	//모터 작동 문구용
 };
 
 #endif
