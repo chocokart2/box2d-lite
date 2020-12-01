@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.8)
 project(box2d-lite LANGUAGES CXX)
 
 add_subdirectory(src)
+add_subdirectory(src-our-physics)
+
 
 option(BOX2D_BUILD_SAMPLES "Build the box2d-lite sample program" ON)
 

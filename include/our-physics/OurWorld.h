@@ -29,7 +29,7 @@ class OurWorld
 	friend class OurBody;
 	friend class OurJoint;
 	friend class MainClass;
-	friend class OurCollideClass
+	friend class OurCollideClass;
 
 private:
 	std::vector<OurBody*> bodies;

@@ -35,7 +35,8 @@ namespace
 
 	float timeStep = 1.0f / 60.0f;
 	int iterations = 10;
-	V2 gravity(0.0f, -10.0f);
+	//V2 gravity(0.0f, -10.0f);
+	V2 gravity(0.0f, -1.0f);
 
 	int numBodies = 0;
 	int numJoints = 0;
@@ -54,6 +55,28 @@ namespace
 	bool flag = false;
 }
 
+class MainClass {
+public:
+
+	static void DrawBody(OurBody* body);
+	static void DrawJoint(OurJoint* joint);
+	static void LaunchBomb();
+	static void Demo1(OurBody* b, OurJoint* j);
+	static void Demo2(OurBody* b, OurJoint* j);
+	static void Demo3(OurBody* b, OurJoint* j);
+	static void Demo4(OurBody* b, OurJoint* j);
+	static void Demo5(OurBody* b, OurJoint* j);
+	static void Demo6(OurBody* b, OurJoint* j);
+	static void Demo7(OurBody* b, OurJoint* j);
+	static void Demo8(OurBody* b, OurJoint* j);
+	static void Demo9(OurBody* b, OurJoint* j);
+
+	static void Keyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+	static int mainFunc();
+};
+
+
 static void glfwErrorCallback(int error, const char* description)
 {
 	printf("GLFW error %d: %s\n", error, description);
@@ -70,7 +93,7 @@ static void DrawText(int x, int y, const char* string)
 	ImGui::End();
 }
 
-static void DrawBody(OurBody* body)
+void MainClass::DrawBody(OurBody* body)
 {
 	M22 R(body->rotation);
 	V2 x = body->position;
@@ -94,10 +117,10 @@ static void DrawBody(OurBody* body)
 	glEnd();
 }
 
-static void DrawJoint(OurJoint* joint)
+void MainClass::DrawJoint(OurJoint* joint)
 {
-	Body* b1 = joint->body1;
-	Body* b2 = joint->body2;
+	OurBody* b1 = joint->body1;
+	OurBody* b2 = joint->body2;
 
 	M22 R1(b1->rotation);
 	M22 R2(b2->rotation);
@@ -117,14 +140,14 @@ static void DrawJoint(OurJoint* joint)
 	glEnd();
 }
 
-static void LaunchBomb()
+void MainClass::LaunchBomb()
 {
 	if (!bomb)
 	{
 		bomb = bodies + numBodies;
 		bomb->Set(V2(1.0f, 1.0f), 50.0f);
 		bomb->friction = 0.2f;
-		world.Add(bomb);
+		world.Add(bomb); // 여기서 오류남, 근데 관절도 불려진것 같은데
 		++numBodies;
 	}
 
@@ -135,7 +158,7 @@ static void LaunchBomb()
 }
 
 // Single box
-static void Demo1(OurBody* b, OurJoint* j)
+void MainClass::Demo1(OurBody* b, OurJoint* j)
 {
 	b->Set(V2(100.0f, 20.0f), FLT_MAX);
 	b->position.Set(0.0f, -0.5f * b->width.y);
@@ -149,7 +172,7 @@ static void Demo1(OurBody* b, OurJoint* j)
 }
 
 // A simple pendulum
-static void Demo2(OurBody* b, OurJoint* j)
+void MainClass::Demo2(OurBody* b, OurJoint* j)
 {
 	OurBody* b1 = b + 0;
 	b1->Set(V2(100.0f, 20.0f), FLT_MAX);
@@ -174,7 +197,7 @@ static void Demo2(OurBody* b, OurJoint* j)
 }
 
 // Varying friction coefficients
-static void Demo3(OurBody* b, OurJoint* j)
+void MainClass::Demo3(OurBody* b, OurJoint* j)
 {
 	b->Set(V2(100.0f, 20.0f), FLT_MAX);
 	b->position.Set(0.0f, -0.5f * b->width.y);
@@ -221,7 +244,7 @@ static void Demo3(OurBody* b, OurJoint* j)
 }
 
 // A vertical stack
-static void Demo4(OurBody* b, OurJoint* j)
+void MainClass::Demo4(OurBody* b, OurJoint* j)
 {
 	b->Set(V2(100.0f, 20.0f), FLT_MAX);
 	b->friction = 0.2f;
@@ -242,7 +265,7 @@ static void Demo4(OurBody* b, OurJoint* j)
 }
 
 // A pyramid
-static void Demo5(OurBody* b, OurJoint* j)
+void MainClass::Demo5(OurBody* b, OurJoint* j)
 {
 	b->Set(V2(100.0f, 20.0f), FLT_MAX);
 	b->friction = 0.2f;
@@ -275,7 +298,7 @@ static void Demo5(OurBody* b, OurJoint* j)
 }
 
 // A teeter
-static void Demo6(OurBody* b, OurJoint* j)
+void MainClass::Demo6(OurBody* b, OurJoint* j)
 {
 	OurBody* b1 = b + 0;
 	b1->Set(V2(100.0f, 20.0f), FLT_MAX);
@@ -311,7 +334,7 @@ static void Demo6(OurBody* b, OurJoint* j)
 }
 
 // A suspension bridge
-static void Demo7(OurBody* b, OurJoint* j)
+void MainClass::Demo7(OurBody* b, OurJoint* j)
 {
 	b->Set(V2(100.0f, 20.0f), FLT_MAX);
 	b->friction = 0.2f;
@@ -367,7 +390,7 @@ static void Demo7(OurBody* b, OurJoint* j)
 }
 
 // Dominos
-static void Demo8(OurBody* b, OurJoint* j)
+void MainClass::Demo8(OurBody* b, OurJoint* j)
 {
 	OurBody* b1 = b;
 	b->Set(V2(100.0f, 20.0f), FLT_MAX);
@@ -444,7 +467,7 @@ static void Demo8(OurBody* b, OurJoint* j)
 }
 
 // A multi-pendulum
-static void Demo9(OurBody* b, OurJoint* j)
+void MainClass::Demo9(OurBody* b, OurJoint* j)
 {
 	b->Set(V2(100.0f, 20.0f), FLT_MAX);
 	b->friction = 0.2f;
@@ -499,7 +522,7 @@ static void Demo9(OurBody* b, OurJoint* j)
 	}
 }
 
-void (*demos[])(OurBody* b, OurJoint* j) = {Demo1, Demo2, Demo3, Demo4, Demo5, Demo6, Demo7, Demo8, Demo9};
+void (*demos[])(OurBody* b, OurJoint* j) = { MainClass::Demo1, MainClass::Demo2, MainClass::Demo3, MainClass::Demo4, MainClass::Demo5, MainClass::Demo6, MainClass::Demo7, MainClass::Demo8, MainClass::Demo9};
 const char* demoStrings[] = {
 	"Demo 1: A Single Box",
 	"Demo 2: Simple Pendulum",
@@ -513,7 +536,7 @@ const char* demoStrings[] = {
 
 static void InitDemo(int index)
 {
-	world.Clear();
+	world.Clear(); // 여기에도 오류난듯
 	numBodies = 0;
 	numJoints = 0;
 	bomb = NULL;
@@ -522,7 +545,7 @@ static void InitDemo(int index)
 	demos[index](bodies, joints);
 }
 
-static void Keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
+void MainClass::Keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (action != GLFW_PRESS)
 	{
@@ -571,7 +594,7 @@ static void Keyboard(GLFWwindow* window, int key, int scancode, int action, int 
 
 	// 빙판 기능 추가 (i키를 누를 시)
 	case GLFW_KEY_I:
-		Arbiter::flag2 = !Arbiter::flag2;
+		OurArbiter::flag2 = !OurArbiter::flag2;
 		break;
 	}
 }
@@ -598,14 +621,12 @@ static void Reshape(GLFWwindow*, int w, int h)
 	}
 }
 
-class MainClass {
-public:
-	static int mainFunc();
-};
-
-
 int MainClass::mainFunc()
 {
+	world.accumulateImpulses = true;
+	world.warmStarting = true;
+	world.positionCorrection = true;
+
 	glfwSetErrorCallback(glfwErrorCallback);
 
 	if (glfwInit() == 0)
@@ -698,7 +719,7 @@ int MainClass::mainFunc()
 		DrawText(5, 155, buffer);
 
 		// 빙판 문구 추가
-		sprintf(buffer, "(I)ce plane %s", Arbiter::flag2 ? "ON" : "OFF");
+		sprintf(buffer, "(I)ce plane %s", OurArbiter::flag2 ? "ON" : "OFF");
 		DrawText(5, 185, buffer);
 
 		glMatrixMode(GL_MODELVIEW);
@@ -725,10 +746,10 @@ int MainClass::mainFunc()
 		glPointSize(4.0f);
 		glColor3f(1.0f, 0.0f, 0.0f);
 		glBegin(GL_POINTS);
-		std::map<ArbiterKey, Arbiter>::const_iterator iter;
+		std::map<OurArbiterKey, OurArbiter>::const_iterator iter;
 		for (iter = world.arbiters.begin(); iter != world.arbiters.end(); ++iter)
 		{
-			const Arbiter& arbiter = iter->second;
+			const OurArbiter& arbiter = iter->second;
 			for (int i = 0; i < arbiter.numContacts; ++i)
 			{
 				V2 p = arbiter.contacts[i].position;

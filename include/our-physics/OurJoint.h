@@ -15,7 +15,7 @@
 
 #include "OurMath.h"
 
-class OurBody;
+//class OurBody;
 
 class OurJoint
 {
@@ -25,7 +25,7 @@ class OurJoint
 	friend class OurBody;
 	friend class OurWorld;
 	friend class MainClass;
-	friend class OurCollideClass
+	friend class OurCollideClass;
 
 private:
 	M22 M;

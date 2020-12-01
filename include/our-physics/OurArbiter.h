@@ -170,7 +170,7 @@ public:
 
 	static int ClipSegmentToLine(ClipVertex vOut[2], ClipVertex vIn[2],
 		const V2& normal, float offset, char clipEdge);
-	static int ComputeIncidentEdge(ClipVertex c[2], const V2& h, const V2& pos,
+	static void ComputeIncidentEdge(ClipVertex c[2], const V2& h, const V2& pos,
 		const M22& Rot, const V2& normal);
 	static int OurCollide(OurContact* contacts, OurBody* body1, OurBody* body2);
 };

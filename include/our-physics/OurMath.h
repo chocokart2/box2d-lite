@@ -28,7 +28,7 @@ class OurJoint;
 class OurWorld;
 class M22;
 class MainClass;
-class OurCollideClass
+class OurCollideClass;
 
 class V2
 {
@@ -40,7 +40,7 @@ class V2
 	friend class OurWorld;
 	friend class MainClass;
 	friend class M22;
-	friend class OurCollideClass
+	friend class OurCollideClass;
 private:
 	float x, y;
 
@@ -70,11 +70,13 @@ public:
 	}
 
 	// 이 함수들은 비상용 GetSet 함수입니다.
-	float getX() { return x; }
-	float getY() { return y; }
+	float getX() const { return x; }
+	float getY() const { return y; }
 	
 	void setX(float _x) { x = _x; }
 	void setY(float _y) { y = _y; }
+
+
 };
 
 class M22
@@ -87,7 +89,7 @@ class M22
 	friend class OurWorld;
 	friend class MainClass;
 	friend class V2;
-	friend class OurCollideClass
+	friend class OurCollideClass;
 private:
 	V2 col1, col2;
 
@@ -118,56 +120,63 @@ public:
 		B.col1.y = -det * c;	B.col2.y = det * a;
 		return B;
 	}
+	// 이 함수들은 비상용 GetSet 함수입니다.
+
+	V2 GetCol1() const { return col1; }
+	V2 GetCol2() const { return col2; }
+
+	void setCol1(V2 value) { col1 = value; }
+	void setCol2(V2 value) { col2 = value; }
 };
 
 inline float Dot(const V2& a, const V2& b)
 {
-	return a.x * b.x + a.y * b.y;
+	return a.getX() * b.getX() + a.getY() * b.getY();
 }
 
 inline float Cross(const V2& a, const V2& b)
 {
-	return a.x * b.y - a.y * b.x;
+	return a.getX() * b.getY() - a.getY() * b.getX();
 }
 
 inline V2 Cross(const V2& a, float s)
 {
-	return V2(s * a.y, -s * a.x);
+	return V2(s * a.getY(), -s * a.getX());
 }
 
 inline V2 Cross(float s, const V2& a)
 {
-	return V2(-s * a.y, s * a.x);
+	return V2(-s * a.getY(), s * a.getX());
 }
 
 inline V2 operator * (const M22& A, const V2& v)
 {
-	return V2(A.col1.x * v.x + A.col2.x * v.y, A.col1.y * v.x + A.col2.y * v.y);
+	return V2(A.GetCol1().getX() * v.getX() + A.GetCol1().getX() * v.getY(), A.GetCol1().getY() * v.getX() + A.GetCol1().getY() * v.getY());
 }
 
 inline V2 operator + (const V2& a, const V2& b)
 {
-	return V2(a.x + b.x, a.y + b.y);
+	return V2(a.getX() + b.getX(), a.getY() + b.getY());
 }
 
 inline V2 operator - (const V2& a, const V2& b)
 {
-	return V2(a.x - b.x, a.y - b.y);
+	return V2(a.getX() - b.getX(), a.getY() - b.getY());
 }
 
 inline V2 operator * (float s, const V2& v)
 {
-	return V2(s * v.x, s * v.y);
+	return V2(s * v.getX(), s * v.getY());
 }
 
 inline M22 operator + (const M22& A, const M22& B)
 {
-	return M22(A.col1 + B.col1, A.col2 + B.col2);
+	return M22(A.GetCol1() + B.GetCol1(), A.GetCol2() + B.GetCol1());
 }
 
 inline M22 operator * (const M22& A, const M22& B)
 {
-	return M22(A * B.col1, A * B.col2);
+	return M22(A * B.GetCol1(), A * B.GetCol1());
 }
 
 inline float Abs(float a)
@@ -177,12 +186,12 @@ inline float Abs(float a)
 
 inline V2 Abs(const V2& a)
 {
-	return V2(fabsf(a.x), fabsf(a.y));
+	return V2(fabsf(a.getX()), fabsf(a.getY()));
 }
 
 inline M22 Abs(const M22& A)
 {
-	return M22(Abs(A.col1), Abs(A.col2));
+	return M22(Abs(A.GetCol1()), Abs(A.GetCol2()));
 }
 
 // 만약 죽음의 다이아몬드가 생겨난다면 여기를 조작하여 주석화시키십시오.

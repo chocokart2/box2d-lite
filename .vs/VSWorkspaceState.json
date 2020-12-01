@@ -1,13 +1,17 @@
 {
   "ExpandedNodes": [
     "",
-    "\\include",
-    "\\include\\box2d-lite",
-    "\\include\\our-physics",
-    "\\samples",
+    "\\docs",
+    "\\extern\\glad\\include",
+    "\\extern\\glad\\include\\glad",
+    "\\extern\\glad\\include\\KHR",
+    "\\extern\\glad\\src",
+    "\\extern\\glfw\\include",
+    "\\extern\\glfw\\include\\GLFW",
+    "\\kart",
     "\\src",
-    "\\src\\our-physics"
+    "\\src-our-physics"
   ],
-  "SelectedNode": "\\src\\our-physics\\OurArbiter.cpp",
+  "SelectedNode": "\\samples\\main.cpp",
   "PreviewInSolutionExplorer": false
 }

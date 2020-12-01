@@ -15,7 +15,7 @@
 
 #include "OurMath.h"
 
-struct OurBody
+class OurBody
 {
 	friend class OurArbiter;
 	friend class OurArbiterKey;
