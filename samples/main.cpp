@@ -758,7 +758,10 @@ int main(int, char**)
 
 		//모터 작동 문구, 3번째 파라미터는 World에 생성해야 함.
 		sprintf(buffer, "(M)oter %s", World::Moter ? "ON" : "OFF");
-		DrawText(5, 155, buffer);
+		DrawText(5, 215, buffer);
+
+		sprintf(buffer, "(T)hrow 2 Body");
+		DrawText(5, 245, buffer);
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();

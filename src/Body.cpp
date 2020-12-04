@@ -26,6 +26,8 @@ Body::Body()
 	invMass = 0.0f;
 	I = FLT_MAX;
 	invI = 0.0f;
+
+	impulseLimit = 1000.0f;
 }
 
 void Body::Set(const Vec2& w, float m)

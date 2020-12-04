@@ -205,4 +205,12 @@ void Arbiter::ApplyImpulse()
 		b2->velocity += b2->invMass * Pt;
 		b2->angularVelocity += b2->invI * Cross(c->r2, Pt);
 	}
+	
+	for (int i = 0; i < 2; i++) {
+		Body* targetBody[2] = { body1, body2 };
+		if (targetBody[i]->impulseLimit < Max(contacts[0].Pn,contacts[1].Pn)) {
+			printf("meow %f \n", Max(contacts[0].Pn, contacts[1].Pn));
+		}
+	}
+
 }
