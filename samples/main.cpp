@@ -119,6 +119,28 @@ static void DrawJoint(Joint* joint)
 	glEnd();
 }
 
+static void test()
+{
+	Body* tb = NULL;
+	tb = bodies + numBodies;
+	tb->Set(Vec2(1.0f, 1.0f), 50.0f);
+	world.Add(tb);
+	++numBodies;
+
+	tb->position.Set(-10.0f, 10.0f);
+	tb->velocity = Vec2(Random(20.0f, 50.0f), 0.0f);
+
+	Body* tb2 = NULL;
+	tb2 = bodies + numBodies;
+	tb2->Set(Vec2(1.0f, 1.0f), 50.0f);
+	world.Add(tb2);
+	++numBodies;
+
+	tb2->position.Set(10.0f, 10.0f);
+	tb2->velocity = Vec2(Random(-50.0f, -0.01f), 0.0f);
+
+}
+
 static void LaunchBomb()
 {
 	if (!bomb)
@@ -607,6 +629,10 @@ static void Keyboard(GLFWwindow* window, int key, int scancode, int action, int 
 	// 빙판 기능 추가 (i키를 누를 시)
 	case GLFW_KEY_I:
 		Arbiter::flag2 = !Arbiter::flag2;
+		break;
+	case GLFW_KEY_T:
+
+		test();
 		break;
 	}
 }
