@@ -136,7 +136,7 @@ void Arbiter::PreStep(float inv_dt)
 //void Arbiter::ApplyImpulse()
 void Arbiter::ApplyImpulse(Body** deadBodyStoragePtr, int numStorage)
 {
-	printf("debug - ApplyImpulse \n");
+	//printf("debug - ApplyImpulse \n");
 	Body* b1 = body1;
 	Body* b2 = body2;
 
@@ -217,20 +217,21 @@ void Arbiter::ApplyImpulse(Body** deadBodyStoragePtr, int numStorage)
 			//World::KillBody(targetBody[i]);
 
 			for (int k = 0;k < 200;k++) {
-				/*
-				if (deadBodyStoragePtr[k] == targetBody[i])
-				{
-					break; // 이미 제거할 목록에 기록되어 있습니다.
-				}
 				if (deadBodyStoragePtr[k] == NULL) {
 					deadBodyStoragePtr[k] = targetBody[i];
 					printf("[DEBUG] Body Registered.");
 					break;
 				}
+				if (deadBodyStoragePtr[k] == targetBody[i])
+				{
+					printf("[DEBUG] Body Checking...");
+					break; // 이미 제거할 목록에 기록되어 있습니다.
+				}
+
 				if (k >= numStorage) {
 					printf("<!>ERROR<!> Cannot Kill Body Anymore! : deadBodyStoragePtr is full.");
 					break;
-				}*/
+				}
 			}
 		}
 	}
