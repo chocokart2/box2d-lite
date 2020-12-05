@@ -8,7 +8,7 @@
 * of this software for any purpose.  
 * It is provided "as is" without express or implied warranty.
 */
-
+#include <iostream>
 #include "box2d-lite/Arbiter.h"
 #include "box2d-lite/Body.h"
 
@@ -155,6 +155,7 @@ static void ComputeIncidentEdge(ClipVertex c[2], const Vec2& h, const Vec2& pos,
 // The normal points from A to B
 int Collide(Contact* contacts, Body* bodyA, Body* bodyB)
 {
+
 	// Setup
 	Vec2 hA = 0.5f * bodyA->width;
 	Vec2 hB = 0.5f * bodyB->width;
@@ -325,5 +326,6 @@ int Collide(Contact* contacts, Body* bodyA, Body* bodyB)
 		}
 	}
 
+	printf("Debug - Collide - %d \n", numContacts);
 	return numContacts;
 }

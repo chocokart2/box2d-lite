@@ -90,24 +90,19 @@ void World::Step(float dt)
 	// Integrate forces.
 	for (int i = 0; i < (int)bodies.size(); ++i)
 	{
-		printf("debug - step-force \n");
 		Body* b = bodies[i];
 
 		if (b->invMass == 0.0f)
 			continue;
 
-		Vec2 TestFor_oldVelocity = b->velocity; // DEBUG
-
 		b->velocity += dt * (gravity + b->invMass * b->force);
 		b->angularVelocity += dt * b->invI * b->torque;
 
-		if (b->velocity == TestFor_oldVelocity) { printf("ERROR - No Change of b->velocity \n"); }
 	}
 
 	// Perform pre-steps.
 	for (ArbIter arb = arbiters.begin(); arb != arbiters.end(); ++arb)
 	{
-		printf("debug - ReadyPreStep \n");
 		arb->second.PreStep(inv_dt);
 	}
 
@@ -122,9 +117,7 @@ void World::Step(float dt)
 		for (ArbIter arb = arbiters.begin(); arb != arbiters.end(); ++arb)
 		{
 			//Body* dummy[2]; // 초기화되지 않았습니다.
-			//arb->second.ApplyImpulse();
-			//Body** deadBodyStorage = {NULL,};
-			arb->second.ApplyImpulse(deadBodyStorage,200);
+			arb->second.ApplyImpulse();
 
 			// 요기서 메모리를 쌓을까요
 			//arb->second.ApplyImpulse(&deadBodyStorage[0],200);
@@ -141,13 +134,8 @@ void World::Step(float dt)
 	{
 		Body* b = bodies[i];
 
-		Vec2 TestFor_OldPosition = b->position;
-
 		b->position += dt * b->velocity;
 		b->rotation += dt * b->angularVelocity;
-		
-
-		if((b->position == TestFor_OldPosition) && !(b->velocity.x == 0 && b->velocity.y == 0)) { printf("ERROR - B->position change did not worked. \n"); }
 
 		b->force.Set(0.0f, 0.0f);
 		b->torque = 0.0f;

@@ -84,7 +84,7 @@ void Arbiter::Update(Contact* newContacts, int numNewContacts)
 		}
 	}
 
-	for (int i = 0; i < numNewContacts; ++i)
+	for (int i = 0; i < numNewContacts ; ++i)
 		contacts[i] = mergedContacts[i];
 
 	numContacts = numNewContacts;
@@ -133,8 +133,10 @@ void Arbiter::PreStep(float inv_dt)
 	}
 }
 
-void Arbiter::ApplyImpulse()
+//void Arbiter::ApplyImpulse()
+void Arbiter::ApplyImpulse(Body** deadBodyStoragePtr, int numStorage)
 {
+	printf("debug - ApplyImpulse \n");
 	Body* b1 = body1;
 	Body* b2 = body2;
 
@@ -208,8 +210,28 @@ void Arbiter::ApplyImpulse()
 	
 	for (int i = 0; i < 2; i++) {
 		Body* targetBody[2] = { body1, body2 };
+
 		if (targetBody[i]->impulseLimit < Max(contacts[0].Pn,contacts[1].Pn)) {
 			printf("[Debug] OverImpulse detected : %f \n", Max(contacts[0].Pn, contacts[1].Pn));
+
+			//World::KillBody(targetBody[i]);
+
+			for (int k = 0;k < 200;k++) {
+				/*
+				if (deadBodyStoragePtr[k] == targetBody[i])
+				{
+					break; // 이미 제거할 목록에 기록되어 있습니다.
+				}
+				if (deadBodyStoragePtr[k] == NULL) {
+					deadBodyStoragePtr[k] = targetBody[i];
+					printf("[DEBUG] Body Registered.");
+					break;
+				}
+				if (k >= numStorage) {
+					printf("<!>ERROR<!> Cannot Kill Body Anymore! : deadBodyStoragePtr is full.");
+					break;
+				}*/
+			}
 		}
 	}
 

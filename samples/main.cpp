@@ -121,10 +121,11 @@ static void DrawJoint(Joint* joint)
 
 static void test()
 {
+
 	Body* tb = NULL;
 	tb = bodies + numBodies;
 	tb->Set(Vec2(1.0f, 1.0f), 50.0f);
-	world.Add(tb);
+	world.World::Add(tb);
 	++numBodies;
 
 	tb->position.Set(-10.0f, 10.0f);
@@ -631,7 +632,6 @@ static void Keyboard(GLFWwindow* window, int key, int scancode, int action, int 
 		Arbiter::flag2 = !Arbiter::flag2;
 		break;
 	case GLFW_KEY_T:
-
 		test();
 		break;
 	}
@@ -769,7 +769,7 @@ int main(int, char**)
 		
 		// flag에 따른 일시정지 여부
 		if (flag == true)
-		{
+		{  
 			world.Step(0);
 		}
 		else

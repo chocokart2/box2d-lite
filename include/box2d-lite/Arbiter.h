@@ -71,7 +71,8 @@ struct Arbiter
 	void Update(Contact* contacts, int numContacts);
 
 	void PreStep(float inv_dt);
-	void ApplyImpulse();
+	//void ApplyImpulse();
+	void ApplyImpulse(Body**,int); // 바디의 포인터를 저장하는 배열을 매개변수로 받습니다. // Okay
 
 	Contact contacts[MAX_POINTS];
 	int numContacts;
