@@ -27,7 +27,6 @@ struct World
 	void Add(Body* body);
 	void Add(Joint* joint);
 	void Clear();
-
 	void Step(float dt);
 
 	void BroadPhase();
@@ -35,6 +34,8 @@ struct World
 	std::vector<Body*> bodies;
 	std::vector<Joint*> joints;
 	std::map<ArbiterKey, Arbiter> arbiters;
+	//std::vector<Body*> deadBodies;
+	Body* deadBodyStorage[200] = { NULL, }; // Okay
 	Vec2 gravity;
 	int iterations;
 	static bool accumulateImpulses;

@@ -23,6 +23,7 @@ struct Body
 	{
 		force += f;
 	}
+	void setPosition2(Vec2& v);
 
 	Vec2 position;
 	float rotation;
@@ -38,6 +39,10 @@ struct Body
 	float friction;
 	float mass, invMass;
 	float I, invI;
+	
+	float impulseLimit;
+	bool isBreakAble;
+	bool isItExist = true;
 };
 
 #endif

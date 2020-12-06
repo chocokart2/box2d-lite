@@ -28,6 +28,11 @@ struct Vec2
 
 	Vec2 operator -() { return Vec2(-x, -y); }
 	
+	bool operator == (const Vec2& v)
+	{
+		return (x == v.x) && (y == v.y);
+	}
+
 	void operator += (const Vec2& v)
 	{
 		x += v.x; y += v.y;
