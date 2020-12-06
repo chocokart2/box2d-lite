@@ -26,8 +26,9 @@ Body::Body()
 	invMass = 0.0f;
 	I = FLT_MAX;
 	invI = 0.0f;
-
-	impulseLimit = 900.0f;
+	isBreakAble = true;
+	impulseLimit = 400.0f;
+	isItExist = true;
 }
 
 void Body::Set(const Vec2& w, float m)
@@ -42,7 +43,8 @@ void Body::Set(const Vec2& w, float m)
 
 	width = w;
 	mass = m;
-
+	impulseLimit = 400.0f;
+	isItExist = true;
 	if (mass < FLT_MAX)
 	{
 		invMass = 1.0f / mass;
@@ -51,9 +53,15 @@ void Body::Set(const Vec2& w, float m)
 	}
 	else
 	{
-		impulseLimit = 3000.0f;
+		//impulseLimit = 3000.0f;
+		
 		invMass = 0.0f;
 		I = FLT_MAX;
 		invI = 0.0f;
+		isBreakAble = false;
 	}
+}
+
+void Body::setPosition2(Vec2& v) {
+	position = v;
 }

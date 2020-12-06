@@ -82,8 +82,9 @@ static void DrawBody(Body* body)
 	Vec2 v2 = x + R * Vec2( h.x, -h.y);
 	Vec2 v3 = x + R * Vec2( h.x,  h.y);
 	Vec2 v4 = x + R * Vec2(-h.x,  h.y);
-
-	if (body == bomb)
+	if (body->isItExist == false)
+		glColor3f(1.3f, 0.7f, 0.3f);
+	else if (body == bomb)
 		glColor3f(0.4f, 0.9f, 0.4f);
 	else
 		glColor3f(0.8f, 0.8f, 0.9f);
@@ -130,6 +131,7 @@ static void test()
 
 	tb->position.Set(-10.0f, 10.0f);
 	tb->velocity = Vec2(Random(20.0f, 50.0f), 0.0f);
+	tb->impulseLimit = 600;
 
 	Body* tb2 = NULL;
 	tb2 = bodies + numBodies;
@@ -139,7 +141,7 @@ static void test()
 
 	tb2->position.Set(10.0f, 10.0f);
 	tb2->velocity = Vec2(Random(-50.0f, -0.01f), 0.0f);
-
+	tb2->impulseLimit = 600;
 }
 
 static void LaunchBomb()
@@ -157,6 +159,7 @@ static void LaunchBomb()
 	bomb->rotation = Random(-1.5f, 1.5f);
 	bomb->velocity = -1.5f * bomb->position;
 	bomb->angularVelocity = Random(-20.0f, 20.0f);
+	bomb->isItExist = true;
 }
 
 //모터 생성 LaunchBomb()의 형식을 가져옴.
@@ -198,6 +201,7 @@ static void Demo1(Body* b, Joint* j)
 	b->Set(Vec2(1.0f, 1.0f), 200.0f);
 	b->position.Set(0.0f, 4.0f);
 	world.Add(b);
+	b->impulseLimit = 900.0f;
 	++b; ++numBodies;
 }
 
@@ -566,6 +570,7 @@ const char* demoStrings[] = {
 
 static void InitDemo(int index)
 {
+	
 	world.Clear();
 	numBodies = 0;
 	numJoints = 0;
@@ -621,7 +626,9 @@ static void Keyboard(GLFWwindow* window, int key, int scancode, int action, int 
   	case GLFW_KEY_M:		//모터 작동용
 		moterOper =!moterOper;
 		Moter(moterOper);
-  
+		break;
+
+
 	// 일시정지 기능 추가 (s키를 누를 시)
 	case GLFW_KEY_S:
 		flag = !flag;

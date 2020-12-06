@@ -81,7 +81,7 @@ void World::BroadPhase()
 
 void World::Step(float dt)
 {
-	printf("debug - step \n");
+	//printf("debug - step \n");
 	float inv_dt = dt > 0.0f ? 1.0f / dt : 0.0f;
 
 	// Determine overlapping bodies and update contact points.
@@ -90,24 +90,29 @@ void World::Step(float dt)
 	// Integrate forces.
 	for (int i = 0; i < (int)bodies.size(); ++i)
 	{
-		printf("debug - step-force \n");
+		//printf("debug - step-force \n");
 		Body* b = bodies[i];
 
 		if (b->invMass == 0.0f)
 			continue;
 
-		Vec2 TestFor_oldVelocity = b->velocity; // DEBUG
+		//Vec2 TestFor_oldVelocity = b->velocity; // DEBUG
 
 		b->velocity += dt * (gravity + b->invMass * b->force);
 		b->angularVelocity += dt * b->invI * b->torque;
 
-		if (b->velocity == TestFor_oldVelocity) { printf("ERROR - No Change of b->velocity \n"); }
+		if (b->isItExist == false) {
+			b->velocity.Set(0, 0);
+			b->angularVelocity = 0.0f;
+			//b->position.Set(20, 20);
+		}
+		//if (b->velocity == TestFor_oldVelocity) { printf("ERROR - No Change of b->velocity \n"); }
 	}
 
 	// Perform pre-steps.
 	for (ArbIter arb = arbiters.begin(); arb != arbiters.end(); ++arb)
 	{
-		printf("debug - ReadyPreStep \n");
+		//printf("debug - ReadyPreStep \n");
 		arb->second.PreStep(inv_dt);
 	}
 
@@ -136,6 +141,8 @@ void World::Step(float dt)
 		}
 	}
 
+
+
 	// Integrate Velocities
 	for (int i = 0; i < (int)bodies.size(); ++i)
 	{
@@ -147,17 +154,14 @@ void World::Step(float dt)
 		b->rotation += dt * b->angularVelocity;
 		
 
-		if((b->position == TestFor_OldPosition) && !(b->velocity.x == 0 && b->velocity.y == 0)) { printf("ERROR - B->position change did not worked. \n"); }
+		//if((b->position == TestFor_OldPosition) && !(b->velocity.x == 0 && b->velocity.y == 0)) { printf("ERROR - B->position change did not worked. \n"); }
 
 		b->force.Set(0.0f, 0.0f);
 		b->torque = 0.0f;
 	}
-}
 
-void World::KillBody(int i) {
-	printf("meow");
-}
-
-void World::KillBody(Body* target) {
-	printf("meow");
+	//Break Block
+	for (int i = 0; i < 200; i++) {
+		deadBodyStorage[i] = NULL;
+	}
 }

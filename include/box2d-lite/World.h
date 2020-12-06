@@ -27,9 +27,6 @@ struct World
 	void Add(Body* body);
 	void Add(Joint* joint);
 	void Clear();
-
-	void KillBody(int i);
-	void KillBody(Body* target);
 	void Step(float dt);
 
 	void BroadPhase();

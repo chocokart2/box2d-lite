@@ -29,8 +29,14 @@ Arbiter::Arbiter(Body* b1, Body* b2)
 		body2 = b1;
 	}
 
-	numContacts = Collide(contacts, body1, body2);
-	
+	//numContacts = Collide(contacts, body1, body2);
+	numContacts = 0; // NEW!
+	if (body1->isItExist && body2->isItExist) {
+		//printf("meow");
+		numContacts = Collide(contacts, body1, body2);
+	}
+
+
 	// flag2에 따른 빙판 
 	if(flag2 == true)
 	{
@@ -211,6 +217,7 @@ void Arbiter::ApplyImpulse(Body** deadBodyStoragePtr, int numStorage)
 	for (int i = 0; i < 2; i++) {
 		Body* targetBody[2] = { body1, body2 };
 
+		if (targetBody[i]->isBreakAble == false) continue;
 		if (targetBody[i]->impulseLimit < Max(contacts[0].Pn,contacts[1].Pn)) {
 			printf("[Debug] OverImpulse detected : %f \n", Max(contacts[0].Pn, contacts[1].Pn));
 
@@ -219,12 +226,19 @@ void Arbiter::ApplyImpulse(Body** deadBodyStoragePtr, int numStorage)
 			for (int k = 0;k < 200;k++) {
 				if (deadBodyStoragePtr[k] == NULL) {
 					deadBodyStoragePtr[k] = targetBody[i];
-					printf("[DEBUG] Body Registered.");
+					printf("[DEBUG] Body Killed. \n");
+
+					//targetBody[i]->setPosition2(Vec2(2, 2));
+					//targetBody[i]->position.Set(2, 2);
+					
+					//targetBody[i]->isItExist = false;
+					targetBody[i]->isItExist = false;
+
 					break;
 				}
 				if (deadBodyStoragePtr[k] == targetBody[i])
 				{
-					printf("[DEBUG] Body Checking...");
+					//printf("[DEBUG] Body Checking...");
 					break; // 이미 제거할 목록에 기록되어 있습니다.
 				}
 
