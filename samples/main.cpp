@@ -11,6 +11,7 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
+#include <algorithm>
 
 #include "imgui/imgui.h"
 #include "imgui_impl_glfw.h"
@@ -24,6 +25,10 @@
 #include "box2d-lite/Body.h"
 #include "box2d-lite/Joint.h"
 
+static Body* target = NULL;
+static int Storaged_Body = 0;
+
+using std::find;
 namespace
 {
 	GLFWwindow* mainWindow = NULL;
@@ -174,7 +179,12 @@ static void Demo1(Body* b, Joint* j)
 
 	b->Set(Vec2(1.0f, 1.0f), 200.0f);
 	b->position.Set(0.0f, 4.0f);
+	//b->position.Set(0.0f, 20.0f);
 	world.Add(b);
+	target = b;
+	//world.bodies.erase(find(world.bodies.begin(), world.bodies.end(), target));
+	
+	//world.bodies.erase(find(world.bodies.begin(), world.bodies.end(), b));
 	++b; ++numBodies;
 }
 
@@ -598,7 +608,7 @@ static void Keyboard(GLFWwindow* window, int key, int scancode, int action, int 
   	case GLFW_KEY_M:		//모터 작동용
 		moterOper =!moterOper;
 		Moter(moterOper);
-  
+		break;
 	// 일시정지 기능 추가 (s키를 누를 시)
 	case GLFW_KEY_S:
 		flag = !flag;
@@ -615,7 +625,7 @@ static void Reshape(GLFWwindow*, int w, int h)
 {
 	width = w;
 	height = h > 0 ? h : 1;
-
+	
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -747,7 +757,7 @@ int main(int, char**)
 		{
 			world.Step(timeStep);
 		}
-
+		
 		
 		for (int i = 0; i < numBodies; ++i)
 			DrawBody(bodies + i);
@@ -776,6 +786,21 @@ int main(int, char**)
 
 		glfwPollEvents();
 		glfwSwapBuffers(mainWindow);
+
+
+		/*
+		if (world.deadBodyStorage[0] != NULL) {
+			printf("pew");
+			//world.bodies.erase(find(world.bodies.begin(), world.bodies.end(), world.deadBodyStorage[0]));
+			bool kart_dead = true;
+			if (kart_dead) {
+				printf("meow");
+				world.bodies.erase(find(world.bodies.begin(), world.bodies.end(), target));
+				kart_dead = false;
+			}
+
+		}
+		/**/
 	}
 
 	glfwTerminate();

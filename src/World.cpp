@@ -12,10 +12,12 @@
 #include "box2d-lite/World.h"
 #include "box2d-lite/Body.h"
 #include "box2d-lite/Joint.h"
+#include <algorithm>
 
 using std::vector;
 using std::map;
 using std::pair;
+using std::find;
 
 typedef map<ArbiterKey, Arbiter>::iterator ArbIter;
 typedef pair<ArbiterKey, Arbiter> ArbPair;
@@ -40,6 +42,7 @@ void World::Clear()
 	bodies.clear();
 	joints.clear();
 	arbiters.clear();
+	for (int a = 0; a < 200; a++) deadBodyStorage[a] = NULL;
 }
 
 void World::BroadPhase()
@@ -81,6 +84,7 @@ void World::BroadPhase()
 
 void World::Step(float dt)
 {
+	//printf("debug - step \n");
 	float inv_dt = dt > 0.0f ? 1.0f / dt : 0.0f;
 
 	// Determine overlapping bodies and update contact points.
@@ -89,6 +93,7 @@ void World::Step(float dt)
 	// Integrate forces.
 	for (int i = 0; i < (int)bodies.size(); ++i)
 	{
+		//printf("debug - step-force \n");
 		Body* b = bodies[i];
 
 		if (b->invMass == 0.0f)
@@ -102,6 +107,7 @@ void World::Step(float dt)
 	// Perform pre-steps.
 	for (ArbIter arb = arbiters.begin(); arb != arbiters.end(); ++arb)
 	{
+		//printf("debug - ReadyPreStep \n");
 		arb->second.PreStep(inv_dt);
 	}
 
@@ -115,7 +121,15 @@ void World::Step(float dt)
 	{
 		for (ArbIter arb = arbiters.begin(); arb != arbiters.end(); ++arb)
 		{
-			arb->second.ApplyImpulse();
+			//Body* dummy[2]; // 초기화되지 않았습니다.
+			//arb->second.ApplyImpulse();
+			//Body** deadBodyStorage = {NULL,};
+			arb->second.ApplyImpulse(deadBodyStorage,200);
+
+
+
+			// 요기서 메모리를 쌓을까요
+			//arb->second.ApplyImpulse(&deadBodyStorage[0],200);
 		}
 
 		for (int j = 0; j < (int)joints.size(); ++j)
@@ -123,14 +137,31 @@ void World::Step(float dt)
 			joints[j]->ApplyImpulse();
 		}
 	}
-
+	for (int index = 0; deadBodyStorage[index] != NULL; index++) {
+		
+		//printf("KyaruKyaruKyaruKyaruKyaruKyaruKyaruKyaruKyaruKyaruKyaruKyaruKyaruKyaru \n");
+		printf("body Killing.. \n");
+		printf("index : %d \n ", find(bodies.begin(), bodies.end(), deadBodyStorage[index]));
+		//bodies.erase(find(bodies.begin(), bodies.end(), deadBodyStorage[index]));
+		//deadBodyStorage[index]->Set(Vec2(0.5f,0.5f), 0.3);
+		printf("body Killed \n");
+		//deadBodyStorage[index] = NULL;
+		
+	}
 	// Integrate Velocities
 	for (int i = 0; i < (int)bodies.size(); ++i)
 	{
 		Body* b = bodies[i];
+		b->position += dt * b->velocity;
+		b->rotation += dt * b->angularVelocity;
+		Vec2 TestFor_OldPosition = b->position; // DEBUG용 변수. 속도가 있는 강체에게 위치 변화가 있지 않는경우 오류로 간주할것입니다.
 
 		b->position += dt * b->velocity;
 		b->rotation += dt * b->angularVelocity;
+		
+		if((b->position == TestFor_OldPosition) && !(b->velocity.x == 0 && b->velocity.y == 0)) {
+			//printf("ERROR - B->position change did not worked. \n");
+		}
 
 		b->force.Set(0.0f, 0.0f);
 		b->torque = 0.0f;

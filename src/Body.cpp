@@ -26,6 +26,9 @@ Body::Body()
 	invMass = 0.0f;
 	I = FLT_MAX;
 	invI = 0.0f;
+
+	isBreakAble = true;
+	impulseLimit = 900.0f;
 }
 
 void Body::Set(const Vec2& w, float m)
@@ -49,6 +52,8 @@ void Body::Set(const Vec2& w, float m)
 	}
 	else
 	{
+		impulseLimit = 3000.0f;
+		isBreakAble = false;
 		invMass = 0.0f;
 		I = FLT_MAX;
 		invI = 0.0f;

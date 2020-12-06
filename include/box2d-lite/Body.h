@@ -38,6 +38,9 @@ struct Body
 	float friction;
 	float mass, invMass;
 	float I, invI;
+
+	bool isBreakAble;
+	float impulseLimit;
 };
 
 #endif

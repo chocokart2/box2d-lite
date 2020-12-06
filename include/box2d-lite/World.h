@@ -35,6 +35,7 @@ struct World
 	std::vector<Body*> bodies;
 	std::vector<Joint*> joints;
 	std::map<ArbiterKey, Arbiter> arbiters;
+	Body* deadBodyStorage[200];
 	Vec2 gravity;
 	int iterations;
 	static bool accumulateImpulses;

@@ -324,6 +324,6 @@ int Collide(Contact* contacts, Body* bodyA, Body* bodyB)
 			++numContacts;
 		}
 	}
-
+	//printf("Debug - Collide - %d \n", numContacts);
 	return numContacts;
 }

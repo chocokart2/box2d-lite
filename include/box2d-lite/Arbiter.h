@@ -71,7 +71,7 @@ struct Arbiter
 	void Update(Contact* contacts, int numContacts);
 
 	void PreStep(float inv_dt);
-	void ApplyImpulse();
+	void ApplyImpulse(Body**, int);
 
 	Contact contacts[MAX_POINTS];
 	int numContacts;
