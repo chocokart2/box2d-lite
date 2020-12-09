@@ -23,7 +23,6 @@ struct Body
 	{
 		force += f;
 	}
-	void setPosition2(Vec2& v);
 
 	Vec2 position;
 	float rotation;

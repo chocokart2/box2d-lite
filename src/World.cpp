@@ -126,13 +126,7 @@ void World::Step(float dt)
 	{
 		for (ArbIter arb = arbiters.begin(); arb != arbiters.end(); ++arb)
 		{
-			//Body* dummy[2]; // 초기화되지 않았습니다.
-			//arb->second.ApplyImpulse();
-			//Body** deadBodyStorage = {NULL,};
 			arb->second.ApplyImpulse(deadBodyStorage,200);
-
-			// 요기서 메모리를 쌓을까요
-			//arb->second.ApplyImpulse(&deadBodyStorage[0],200);
 		}
 
 		for (int j = 0; j < (int)joints.size(); ++j)
